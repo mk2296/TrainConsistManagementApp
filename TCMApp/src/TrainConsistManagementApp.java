@@ -1,38 +1,46 @@
 public class TrainConsistManagementApp {
-    static class InvalidCapacityException extends Exception {
-        InvalidCapacityException(String message) {
+    static class CargoSafetyException extends RuntimeException {
+        CargoSafetyException(String message) {
             super(message);
         }
     }
 
-    static class PassengerBogie {
-        String name;
-        int capacity;
+    static class GoodsBogie {
+        String shape;
+        String cargo;
 
-        PassengerBogie(String name, int capacity) throws InvalidCapacityException {
-            if (capacity <= 0) {
-                throw new InvalidCapacityException("Capacity must be greater than zero");
+        GoodsBogie(String shape) {
+            this.shape = shape;
+        }
+
+        void assignCargo(String cargo) {
+            if ("Rectangular".equals(shape) && "Petroleum".equals(cargo)) {
+                throw new CargoSafetyException("Petroleum cannot be assigned to Rectangular bogie");
             }
-            this.name = name;
-            this.capacity = capacity;
+            this.cargo = cargo;
         }
     }
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
+        GoodsBogie cylindrical = new GoodsBogie("Cylindrical");
+        GoodsBogie rectangular = new GoodsBogie("Rectangular");
+
         try {
-            PassengerBogie sleeper = new PassengerBogie("Sleeper", 72);
-            PassengerBogie acChair = new PassengerBogie("AC Chair", 56);
+            cylindrical.assignCargo("Petroleum");
+            System.out.println("Assigned " + cylindrical.cargo + " to " + cylindrical.shape + " bogie.");
 
-            System.out.println("Passenger bogies created successfully:");
-            System.out.println(sleeper.name + " -> " + sleeper.capacity);
-            System.out.println(acChair.name + " -> " + acChair.capacity);
-
-            PassengerBogie invalid = new PassengerBogie("Faulty Bogie", 0);
-            System.out.println(invalid.name + " -> " + invalid.capacity);
-        } catch (InvalidCapacityException exception) {
-            System.out.println("Failed to create passenger bogie: " + exception.getMessage());
+            rectangular.assignCargo("Petroleum");
+            System.out.println("Assigned " + rectangular.cargo + " to " + rectangular.shape + " bogie.");
+        } catch (CargoSafetyException exception) {
+            System.out.println("Cargo assignment failed: " + exception.getMessage());
+        } finally {
+            System.out.println("Cargo assignment validation completed.");
         }
+
+        rectangular.assignCargo("Coal");
+        System.out.println("Assigned " + rectangular.cargo + " to " + rectangular.shape + " bogie.");
+        System.out.println("Program continues safely.");
     }
 }
