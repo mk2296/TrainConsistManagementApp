@@ -1,23 +1,31 @@
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrainConsistManagementApp {
+    static class GoodsBogie {
+        String type;
+        String cargo;
+
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        String trainId = "TRN-1234";
-        String cargoCode = "PET-AB";
+        List<GoodsBogie> goodsBogies = new ArrayList<>();
+        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogies.add(new GoodsBogie("Open", "Coal"));
+        goodsBogies.add(new GoodsBogie("Box", "Grain"));
+        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
 
-        Pattern trainIdPattern = Pattern.compile("TRN-\\d{4}");
-        Pattern cargoCodePattern = Pattern.compile("PET-[A-Z]{2}");
+        boolean isSafetyCompliant = goodsBogies.stream()
+                .allMatch(bogie -> !"Cylindrical".equals(bogie.type)
+                        || "Petroleum".equals(bogie.cargo));
 
-        Matcher trainIdMatcher = trainIdPattern.matcher(trainId);
-        Matcher cargoCodeMatcher = cargoCodePattern.matcher(cargoCode);
-
-        boolean isTrainIdValid = trainIdMatcher.matches();
-        boolean isCargoCodeValid = cargoCodeMatcher.matches();
-
-        System.out.println("Train ID (" + trainId + ") valid: " + isTrainIdValid);
-        System.out.println("Cargo Code (" + cargoCode + ") valid: " + isCargoCodeValid);
+        System.out.println("Goods bogie count: " + goodsBogies.size());
+        System.out.println("Train safety compliant: " + isSafetyCompliant);
     }
 }
