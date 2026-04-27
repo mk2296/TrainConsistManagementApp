@@ -2,8 +2,12 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        String[] bogieIds = {"BG101", "BG205", "BG309", "BG412", "BG550"};
+        String[] bogieIds = {};
         String searchId = "BG309";
+
+        if (bogieIds.length == 0) {
+            throw new IllegalStateException("Search cannot proceed: no bogies available in train consist");
+        }
 
         int low = 0;
         int high = bogieIds.length - 1;
