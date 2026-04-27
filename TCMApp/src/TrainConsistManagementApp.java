@@ -1,31 +1,49 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
-    static class GoodsBogie {
-        String type;
-        String cargo;
+    static class Bogie {
+        String name;
+        int capacity;
 
-        GoodsBogie(String type, String cargo) {
-            this.type = type;
-            this.cargo = cargo;
+        Bogie(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
         }
     }
 
     public static void main(String[] args) {
         System.out.println("=== Train Consist Management App ===");
 
-        List<GoodsBogie> goodsBogies = new ArrayList<>();
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goodsBogies.add(new GoodsBogie("Open", "Coal"));
-        goodsBogies.add(new GoodsBogie("Box", "Grain"));
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        List<Bogie> bogies = new ArrayList<>();
+        for (int i = 1; i <= 10000; i++) {
+            int capacity = 40 + (i % 50);
+            bogies.add(new Bogie("Bogie-" + i, capacity));
+        }
 
-        boolean isSafetyCompliant = goodsBogies.stream()
-                .allMatch(bogie -> !"Cylindrical".equals(bogie.type)
-                        || "Petroleum".equals(bogie.cargo));
+        long loopStart = System.nanoTime();
+        List<Bogie> loopFiltered = new ArrayList<>();
+        for (Bogie bogie : bogies) {
+            if (bogie.capacity > 60) {
+                loopFiltered.add(bogie);
+            }
+        }
+        long loopEnd = System.nanoTime();
 
-        System.out.println("Goods bogie count: " + goodsBogies.size());
-        System.out.println("Train safety compliant: " + isSafetyCompliant);
+        long streamStart = System.nanoTime();
+        List<Bogie> streamFiltered = bogies.stream()
+                .filter(bogie -> bogie.capacity > 60)
+                .collect(Collectors.toList());
+        long streamEnd = System.nanoTime();
+
+        long loopDuration = loopEnd - loopStart;
+        long streamDuration = streamEnd - streamStart;
+
+        System.out.println("Loop filtering count: " + loopFiltered.size());
+        System.out.println("Stream filtering count: " + streamFiltered.size());
+        System.out.println("Loop execution time (ns): " + loopDuration);
+        System.out.println("Stream execution time (ns): " + streamDuration);
+        System.out.println("Results match: " + (loopFiltered.size() == streamFiltered.size()));
     }
 }
